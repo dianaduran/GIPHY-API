@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="row">
-             <div class="col-md-12 text-center">
+             <div class="col-md-12">
                <div id="animals-view"></div>
             </div>
         </div>
@@ -51,7 +51,7 @@
 
                 var apikey="rotX86FszzvGQLoKU5IZJvssJtJOxlmZ";
                 var animal = $(this).attr("data-name");
-                var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=" + apikey + "&q="+animal+"&limit=3&offset=0&rating=G&lang=en";
+                var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=" + apikey + "&q="+animal+"&limit=10&offset=0&rating=G&lang=en";
 
                 // Creates AJAX call for the specific animal button being clicked
                 $.ajax({
@@ -63,19 +63,19 @@
                     console.log(response.data);
                     var resp=response.data;
                     $("#animals-view").empty();
-                    $("#animals-view").append('<h2>' + animal.toUpperCase() + '</h2>');
+                    $("#animals-view").append('<h2>' + animal.toUpperCase() + 'S GIFS</h2>');
                     $("#animals-view").append('<hr>');
 
                     
                   
                   for(var i=0;i<resp.length;i++){
 
-
-                    $("#animals-view").append('<p>'+[i+1]+'.-Trending: '+ resp[i].trending_datetime +'</p>');
-                   
+                   var divI=$("<div>");
+                   divI.addClass("divImagen");
+                                     
+                   divI.append('<p>'+[i+1]+'.-Rating: '+ resp[i].rating +'</p>');
                   
-                    var divI=$("<div>");
-                    divI.addClass("divImagen");
+                    
                     var urlImagen = resp[i].images.fixed_height_still.url;
                     var imagen = $("<img>").attr("src", urlImagen);
                     imagen.addClass("animation");
