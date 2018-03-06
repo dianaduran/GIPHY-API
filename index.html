@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Favorite animals</title>
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/flatly/bootstrap.min.css">
+     <link rel="stylesheet" type="text/css" href="asstes/css/style.css">
+    
+    <style type="text/css">
+        button,
+        
+        input {
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="text-center">Animal Search</h1>
+
+        <div class="row">
+            <div class="col-md-12">
+              <div id="buttons-view"></div>
+            </div>
+        </div>
+        <div class="row">
+             <div class="col-md-12 text-center">
+               <div id="animals-view"></div>
+            </div>
+        </div>
+
+      <div class="row">
+         <div class="col-md-12 text-center">
+        <form id="animal-form">
+            <label for="animal-input">Add Animal</label>
+            <input type="text" id="animal-input"><br>
+
+            <!-- Button triggers new animal to be added -->
+            <input id="add-animal" type="submit" value="Add Animal">
+        </form>
+        </div>
+</div>
+       </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            // Array of animals
+            var animals = ["dog", "cat", "tortoise", "bat"];
+
+            // displayanimalInfo function re-renders the HTML to display the appropriate content
+            function displayanimalInfo() {
+
+                var apikey="rotX86FszzvGQLoKU5IZJvssJtJOxlmZ";
+                var animal = $(this).attr("data-name");
+                var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=" + apikey + "&q="+animal+"&limit=1&offset=0&rating=G&lang=en";
+
+                // Creates AJAX call for the specific animal button being clicked
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                }).then(function(response) {
+
+                   
+                    console.log(response.data);
+                    var resp=response.data;
+                     $("#animals-view").empty();
+                    $("#animals-view").append('<h1>' + animal + '</h1>');
+                  
+                    $("#animals-view").append('<h1> Rating: '+ resp["0"].rating +'</h1>');
+                   
+                  
+                    var divI=$("<div>");
+                    divI.addClass("divImagen");
+                    var urlImagen = resp["0"].images.fixed_height_still.url;
+                    var imagen = $("<img>").attr("src", urlImagen);
+                    imagen.addClass("animation");
+
+
+                    //url Still
+                    var URLStill= resp["0"].images.fixed_height_still.url;
+                    imagen.attr('data-still',URLStill);
+                    
+                    // url animate
+                    var URLAnimate= resp["0"].images.fixed_height.url;
+                    imagen.attr('data-animate', URLAnimate);
+
+                     imagen.attr('data-state', 'still');
+
+                    divI.append(imagen);
+                    $("#animals-view").append(divI);
+                    // Puts the entire animal above the previous animals.
+                });
+
+            }
+
+
+            //Function handles events where change the status of the imagen
+            
+          function ImagenClick() {
+        
+
+            var state = $(this).attr("data-state");
+
+            if (state === "still") {
+                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("data-state", "animate");
+            } 
+            else {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still");
+                }
+           }
+
+            // Function for displaying animal data
+            function renderButtons() {
+
+                $("#buttons-view").empty();
+                
+                for (var i = 0; i < animals.length; i++) {
+
+                     var a = $("<button>");
+                     a.addClass("animal");
+                     a.attr("data-name", animals[i]);
+                     a.text(animals[i].toUpperCase());
+                    $("#buttons-view").append(a);
+                }
+            }
+
+            // This function handles events where the add animal button is clicked
+            $("#add-animal").on("click", function(event) {
+                event.preventDefault();
+                
+                var animal = $("#animal-input").val().trim();
+
+
+               if(animals.indexOf(animal.toLowerCase())>=0 || animal=="")
+               {
+                alert("Please, enter correct name to search or look at your buttons already added");
+                
+               }
+            else{
+                animals.push(animal.toLowerCase());
+                $("#animal-input").val("");
+                }
+
+               renderButtons();
+            });
+
+            // Adding click event listeners to all elements with a class of "animal"
+            $(document).on("click", ".animal", displayanimalInfo);
+             $(document).on("click", ".animation", ImagenClick);
+
+            // Calling the renderButtons function to display the intial buttons
+            renderButtons();
+        </script>
+    </div>
+</body>
+
+</html>
